@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Dark is the primary theme. Surfaces are layered, never pure black. */
+  :root,
+  :root.dark {
+    --canvas: 11 13 17;
+    --surface: 17 20 26;
+    --elevated: 23 27 34;
+    --interactive: 31 36 45;
+    --hairline: 38 44 54;
+    --hairline-strong: 54 62 74;
+    --ink: 232 236 243;
+    --muted: 148 158 174;
+    --faint: 104 114 130;
+    --accent: 224 168 92;
+    --accent-soft: 61 46 27;
+    --accent-contrast: 24 18 8;
+    --positive: 74 190 140;
+    --caution: 226 176 84;
+    --critical: 232 112 104;
+  }
+
+  :root.light {
+    --canvas: 248 249 251;
+    --surface: 255 255 255;
+    --elevated: 255 255 255;
+    --interactive: 241 243 247;
+    --hairline: 226 230 237;
+    --hairline-strong: 203 209 219;
+    --ink: 22 26 33;
+    --muted: 92 102 118;
+    --faint: 133 143 158;
+    --accent: 171 112 27;
+    --accent-soft: 252 243 228;
+    --accent-contrast: 255 255 255;
+    --positive: 22 146 100;
+    --caution: 173 122 20;
+    --critical: 196 62 54;
+  }
+
+  * {
+    @apply border-hairline;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: rgb(var(--accent) / 0.26);
+  }
+
+  /* Slim, unobtrusive scrollbars that follow the theme. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-hairlineStrong/70;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-faint/70;
+    background-clip: content-box;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/55 ring-offset-2 ring-offset-canvas;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border border-hairline bg-surface shadow-card;
+  }
+
+  .card-interactive {
+    @apply card transition-all duration-300 ease-subtle hover:border-hairlineStrong hover:shadow-lift;
+  }
+
+  .label {
+    @apply text-2xs font-semibold uppercase tracking-[0.13em] text-faint;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-hairline bg-canvas px-3.5 py-2.5 text-sm text-ink
+           placeholder:text-faint transition-colors duration-200
+           hover:border-hairlineStrong focus:border-accent/60 focus:outline-none
+           focus:ring-2 focus:ring-accent/25;
+  }
+
+  .btn {
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-lg px-4 py-2.5
+           text-sm font-medium transition-all duration-200 ease-subtle
+           disabled:pointer-events-none disabled:opacity-45;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-accent-contrast hover:brightness-[1.07] active:brightness-95;
+  }
+
+  .btn-secondary {
+    @apply btn border border-hairline bg-elevated text-ink
+           hover:border-hairlineStrong hover:bg-interactive;
+  }
+
+  .btn-ghost {
+    @apply btn text-muted hover:bg-interactive hover:text-ink;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-hairline bg-elevated
+           px-2 py-1 text-2xs font-medium text-muted;
+  }
+
+  /* Skeleton shimmer used by loading states. */
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-interactive/70;
+  }
+  .skeleton::after {
+    @apply absolute inset-0 animate-shimmer;
+    content: '';
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--hairline-strong) / 0.4),
+      transparent
+    );
+    transform: translateX(-100%);
+  }
+
+  /* Subtle dotted texture for hero areas. */
+  .dot-grid {
+    background-image: radial-gradient(rgb(var(--hairline-strong) / 0.5) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* React Flow theming so the graph matches the app surfaces. */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__handle {
+  @apply border-hairlineStrong bg-elevated;
+  width: 7px;
+  height: 7px;
+}
+.react-flow__edge-path {
+  stroke: rgb(var(--hairline-strong));
+  stroke-width: 1.5;
+}
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke: rgb(var(--accent) / 0.75);
+}
+.react-flow__controls-button {
+  @apply border-hairline bg-elevated text-muted hover:bg-interactive hover:text-ink;
+  border-bottom-width: 1px;
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+}

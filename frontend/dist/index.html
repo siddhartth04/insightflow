@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" class="dark" style="color-scheme: dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0b0d11" />
+    <meta
+      name="description"
+      content="InsightFlow — an AI research and content workspace. Research. Analyze. Create."
+    />
+    <title>InsightFlow — Research. Analyze. Create.</title>
+    <script>
+      // Apply the stored theme before paint to avoid a flash of the wrong theme.
+      (function () {
+        try {
+          var stored = localStorage.getItem('insightflow.theme');
+          var theme = stored === 'light' ? 'light' : 'dark';
+          document.documentElement.classList.remove('dark', 'light');
+          document.documentElement.classList.add(theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (e) {
+          /* storage unavailable; the dark default in the markup stands */
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-C2x_yQl9.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BpAa9eK9.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
