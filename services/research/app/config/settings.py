@@ -25,6 +25,8 @@ class Settings:
         self.llm_temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.4"))
         self.llm_max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "2000"))
         self.llm_timeout: float = float(os.getenv("LLM_TIMEOUT", "120"))
+        # Retries apply to provider rate limits, which free tiers hit easily.
+        self.llm_max_retries: int = int(os.getenv("LLM_MAX_RETRIES", "3"))
 
         # Optional LiteLLM proxy. When unset, LiteLLM talks to the provider
         # directly using whichever provider key is present in the environment.

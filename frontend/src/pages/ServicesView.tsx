@@ -115,9 +115,9 @@ export function ServicesView() {
                       tone={service.detail?.research_reachable ? 'positive' : 'caution'}
                     />
                   )}
-                  {meta && (
+                  {meta?.agents?.length ? (
                     <Row label="Agents" value={meta.agents.join(' → ')} />
-                  )}
+                  ) : null}
                 </dl>
               )}
             </section>

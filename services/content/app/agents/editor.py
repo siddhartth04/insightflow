@@ -35,7 +35,7 @@ class EditorAgent(Agent):
             '  "notes": ["string (what you changed and why, 2-4 items)"]\n'
             "}"
         )
-        raw = await self._complete_json(prompt, max_tokens=2800)
+        raw = await self._complete_json(prompt, max_tokens=3600)
         return {
             "title": self.as_text(raw.get("title")) or title,
             "body": self.as_text(raw.get("body")) or body,

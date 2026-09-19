@@ -17,7 +17,7 @@ from app.models import (
     Tone,
     CONTENT_TYPE_LABELS,
 )
-from app.services import LLMError, get_llm_client, get_research_client
+from app.services import LLMError, RateLimited, get_llm_client, get_research_client
 from app.workflows import get_workflow
 
 logger = logging.getLogger(__name__)
@@ -75,6 +75,7 @@ async def metadata() -> MetadataResponse:
     tags=["content"],
     responses={
         422: {"description": "The request failed validation."},
+        429: {"description": "The model provider rate limit was exceeded."},
         502: {"description": "The language model could not complete the workflow."},
     },
 )
@@ -87,6 +88,12 @@ async def run_content(request: ContentRequest) -> ContentResponse:
     )
     try:
         return await get_workflow().run(request)
+    except RateLimited as exc:
+        logger.warning("Content workflow rate limited: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=str(exc),
+        ) from exc
     except LLMError as exc:
         logger.error("Content workflow failed: %s", exc)
         raise HTTPException(

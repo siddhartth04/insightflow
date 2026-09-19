@@ -21,6 +21,8 @@ class Settings:
         self.llm_temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.6"))
         self.llm_max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "2000"))
         self.llm_timeout: float = float(os.getenv("LLM_TIMEOUT", "120"))
+        # Retries apply to provider rate limits, which free tiers hit easily.
+        self.llm_max_retries: int = int(os.getenv("LLM_MAX_RETRIES", "3"))
 
         base_url = os.getenv("LITELLM_BASE_URL", "").strip()
         self.litellm_base_url: str | None = base_url or None

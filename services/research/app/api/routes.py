@@ -14,7 +14,7 @@ from app.models import (
     ResearchRequest,
     ResearchResponse,
 )
-from app.services import LLMError, get_llm_client
+from app.services import LLMError, RateLimited, get_llm_client
 from app.workflows import get_workflow
 
 logger = logging.getLogger(__name__)
@@ -65,6 +65,7 @@ async def metadata() -> MetadataResponse:
     tags=["research"],
     responses={
         422: {"description": "The request failed validation."},
+        429: {"description": "The model provider rate limit was exceeded."},
         502: {"description": "The language model could not complete the workflow."},
     },
 )
@@ -73,6 +74,12 @@ async def run_research(request: ResearchRequest) -> ResearchResponse:
     logger.info("Research request received | topic=%r", request.topic)
     try:
         return await get_workflow().run(request.topic, request.depth)
+    except RateLimited as exc:
+        logger.warning("Research workflow rate limited: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=str(exc),
+        ) from exc
     except LLMError as exc:
         logger.error("Research workflow failed: %s", exc)
         raise HTTPException(

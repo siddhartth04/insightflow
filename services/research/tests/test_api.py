@@ -145,3 +145,20 @@ def test_extract_json_tolerates_model_formatting(raw):
 def test_extract_json_raises_on_unparsable_text():
     with pytest.raises(LLMError):
         extract_json("no json at all")
+
+
+# --- truncated response recovery -----------------------------------------
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ('{"summary": "x", "analysis": "unterminated', {"summary": "x", "analysis": "unterminated"}),
+        ('{"summary": "x",', {"summary": "x"}),
+        ('{"summary": "x", "key_findings": ["a", "b', {"summary": "x", "key_findings": ["a", "b"]}),
+        ('{"summary": "x", "insights":', {"summary": "x"}),
+    ],
+)
+def test_extract_json_recovers_truncated_responses(raw, expected):
+    """A response cut off at max_tokens should still yield the fields that arrived."""
+    assert extract_json(raw) == expected

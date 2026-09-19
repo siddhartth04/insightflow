@@ -204,3 +204,35 @@ async def test_research_client_health_probe_is_false_when_unreachable(monkeypatc
     monkeypatch.setattr(httpx.AsyncClient, "get", unreachable)
 
     assert await get_research_client().is_healthy() is False
+
+
+# --- truncated response recovery -----------------------------------------
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ('{"title": "T", "body": "cut off mid sen', {"title": "T", "body": "cut off mid sen"}),
+        ('{"title": "T", "notes": ["one", "two', {"title": "T", "notes": ["one", "two"]}),
+        ('{"title": "T", "body":', {"title": "T"}),
+    ],
+)
+def test_extract_json_recovers_truncated_responses(raw, expected):
+    from app.services import extract_json
+
+    assert extract_json(raw) == expected
+
+
+def test_rate_limit_surfaces_as_429(client, stub_llm, monkeypatch):
+    """Provider rate limits must be distinguishable from a generic failure."""
+    from app.services import RateLimited
+
+    async def limited(self, *, system, prompt, temperature=None, max_tokens=None):
+        raise RateLimited("The model provider rate limit was exceeded.", 8.0)
+
+    monkeypatch.setattr(type(stub_llm.llm), "complete_json", limited)
+
+    response = client.post("/run", json={"topic": "Explain RAG to engineers"})
+
+    assert response.status_code == 429
+    assert "rate limit" in response.json()["detail"].lower()

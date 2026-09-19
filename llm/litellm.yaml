@@ -1,0 +1,34 @@
+# LiteLLM proxy configuration.
+#
+# This proxy is OPTIONAL. By default each service calls the provider directly
+# through the LiteLLM Python SDK, and this container simply offers a single
+# place to route and swap models. To use it, set in your .env:
+#
+#   LITELLM_BASE_URL=http://litellm:4000
+#
+# Keys are read from the environment; none are stored in this file.
+
+model_list:
+  - model_name: gpt-oss-120b
+    litellm_params:
+      model: groq/openai/gpt-oss-120b
+      api_key: os.environ/GROQ_API_KEY
+
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: claude-sonnet
+    litellm_params:
+      model: anthropic/claude-sonnet-4-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+litellm_settings:
+  drop_params: true
+  request_timeout: 300
+  num_retries: 2
+
+general_settings:
+  # Health endpoint used by Docker Compose.
+  background_health_checks: false

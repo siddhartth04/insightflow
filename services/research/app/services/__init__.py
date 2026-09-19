@@ -1,3 +1,3 @@
-from .llm import LLMError, LLMClient, extract_json, get_llm_client
+from .llm import LLMError, LLMClient, RateLimited, extract_json, get_llm_client
 
-__all__ = ["LLMError", "LLMClient", "extract_json", "get_llm_client"]
+__all__ = ["LLMError", "LLMClient", "RateLimited", "extract_json", "get_llm_client"]
